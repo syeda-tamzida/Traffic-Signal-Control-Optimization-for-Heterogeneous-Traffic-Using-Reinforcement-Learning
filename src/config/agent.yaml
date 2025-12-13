@@ -1,0 +1,67 @@
+# The agent.yaml file contains the configuration of the agents used in the benchmark.
+# The agents are defined by their name and the parameters that are used to configure them.
+
+FIXED:
+  module: static.fixed
+  state: wave
+  reward: wait  # Rewards are irrelevant for static agents
+  action_set: Phase
+
+
+IDQN:
+  module: action_value.pfrl_dqn
+  state: drq
+  reward: wait
+  learning_rate: 1e-3
+  batch_size: 32
+  discount: 0.99
+  epsilon_begin: 1.0
+  epsilon_end: 0.0
+  target_update_steps: 500
+  buffer_size: 20000
+  buffer_type: uniform
+  epsilon_decay_period: 0.8 # 80% of the total number of episodes
+  number_of_layers: 3
+  number_of_units: 64
+  # Following are parameters only when using state_builder or reward_builder
+  vehicles_detailed: 0
+  state_builder: [
+      "lane_aggregate", "direction_aggregate", "arrived", "departed",
+      "phase_timers", "approaching", "queued",
+      "effective_running", "average_wait", "average_delay", "average_speed",
+      "average_acceleration", "average_deceleration", "max_wait", "max_delay",
+      "max_speed", "max_acceleration", "max_deceleration", "min_wait",
+      "min_delay", "min_speed", "min_acceleration", "min_deceleration", "wait",
+      "delay", "speed", "acceleration", "deceleration", "time", "pressure",
+      "downstream_arrived", "downstream_departed", "downstream_phase_timers",
+      "downstream_pressure", "downstream_approaching",
+      "downstream_queued", "downstream_effective_running",
+      "downstream_average_wait", "downstream_average_delay",
+      "downstream_average_speed", "downstream_average_acceleration",
+      "downstream_average_deceleration", "downstream_max_wait",
+      "downstream_max_delay", "downstream_max_speed", "downstream_max_acceleration",
+      "downstream_max_deceleration", "downstream_min_wait", "downstream_min_delay",
+      "downstream_min_speed", "downstream_min_acceleration",
+      "downstream_min_deceleration", "downstream_wait", "downstream_delay",
+      "downstream_speed", "downstream_acceleration", "downstream_deceleration",
+  ]
+  reward_builder: ["average_wait"]
+  reward_aggregation: "sum"
+  reward_scale: -1
+
+
+MPLight:
+  module: action_value.mplight
+  state: mplight
+  reward: pressure
+  learning_rate: 1e-3
+  demand_shape: 1 # Size of per-direction demand input, 1 for pressure per direction mplight state
+  batch_size: 32
+  discount: 0.99
+  epsilon_begin: 1.0
+  epsilon_end: 0.0
+  target_update_steps: 500
+  buffer_size: 20000
+  buffer_type: uniform
+  epsilon_decay_period: 0.8
+
